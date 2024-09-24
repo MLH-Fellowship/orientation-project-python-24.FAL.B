@@ -52,7 +52,7 @@ def test_education():
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.json["education"][item_id] == example_education
 
 
 def test_skill():

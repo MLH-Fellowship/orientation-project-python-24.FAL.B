@@ -67,7 +67,17 @@ def education():
         return jsonify({"education": [edu.__dict__ for edu in data["education"]]})
 
     if request.method == 'POST':
-        return jsonify({})
+        new_education = request.json
+        education_instance = Education(
+            new_education["course"],
+            new_education["school"],
+            new_education["start_date"],
+            new_education["end_date"],
+            new_education["grade"],
+            new_education["logo"]
+        )
+        data["education"].append(education_instance)
+        return jsonify({"id": len(data["education"]) - 1})
 
     return jsonify({})
 
