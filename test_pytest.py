@@ -71,4 +71,4 @@ def test_skill():
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill
