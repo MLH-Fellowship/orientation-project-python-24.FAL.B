@@ -13,6 +13,12 @@ data = {
                    "October 2022",
                    "Present",
                    "Writing Python Code",
+                   "example-logo.png"),
+        Experience("Intern",
+                   "A Nice Company",
+                   "October 2021",
+                   "December 2021",
+                   "Writing Scripts",
                    "example-logo.png")
     ],
     "education": [
@@ -45,7 +51,7 @@ def experience():
     Handle experience requests
     '''
     if request.method == 'GET':
-        return jsonify()
+         return jsonify({"experience": [exp.__dict__ for exp in data["experience"]]})
 
     if request.method == 'POST':
         return jsonify({})
