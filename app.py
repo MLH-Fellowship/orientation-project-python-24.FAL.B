@@ -54,7 +54,17 @@ def experience():
          return jsonify({"experience": [exp.__dict__ for exp in data["experience"]]})
 
     if request.method == 'POST':
-        return jsonify({})
+        new_experience = request.json
+        experience_instance = Experience(
+            new_experience["title"],
+            new_experience["company"],
+            new_experience["start_date"],
+            new_experience["end_date"],
+            new_experience["description"],
+            new_experience["logo"]
+        )
+        data["experience"].append(experience_instance)
+        return jsonify({"id": len(data["experience"]) - 1})
 
     return jsonify({})
 

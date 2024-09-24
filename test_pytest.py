@@ -31,7 +31,7 @@ def test_experience():
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.json["experience"][item_id] == example_experience
 
 
 def test_education():
