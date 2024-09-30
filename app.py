@@ -38,6 +38,12 @@ def hello_world():
     '''
     return jsonify({"message": "Hello, World!"})
 
+@app.route('/resume/user', methods=['GET', 'POST', 'PUT'])
+def user():
+    '''
+    Handles User information
+    '''
+    # TODO write routes to handle user information  
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():

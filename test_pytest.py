@@ -12,6 +12,10 @@ def test_client():
     assert response.status_code == 200
     assert response.json['message'] == "Hello, World!"
 
+def test_user():
+    '''
+    TODO write test for the /resume/user route
+    '''    
 
 def test_experience():
     '''
