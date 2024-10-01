@@ -14,8 +14,43 @@ def test_client():
 
 def test_user():
     '''
-    TODO write test for the /resume/user route
-    '''    
+    Tests the /resume/user route. 
+    '''
+    # test GET request.
+    response = app.test_client().get('/resume/user')
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+    # test POST request with valid user information
+    response = app.test_client().post('/resume/user', json={
+        'name': 'John Doe',
+        'phone_number': '+1234567890',
+        'email_address': 'johndoe@example.com'
+    })
+    assert response.status_code == 201
+    assert response.json['name'] == 'John Doe'
+    assert response.json['phone_number'] == '+1234567890'
+    assert response.json['email_address'] == 'johndoe@example.com'
+
+    # test PUT request with invalid email address
+    response = app.test_client().put('/resume/user', json={
+        'name': 'Ola Doe',
+        'phone_number': '+0987654321',
+        'email_address': 'invalid-email'
+    })
+    assert response.status_code == 404
+    assert response.json['error'] == 'User not found !'
+
+    # test PUT request with valid email address
+    response = app.test_client().put('/resume/user', json={
+        'name': 'Ola Doe',
+        'phone_number': '+0987654321',
+        'email_address': 'johndoe@example.com'
+    })
+    assert response.status_code == 200
+    assert response.json['name'] == 'Ola Doe'
+    assert response.json['phone_number'] == '+0987654321'
+    assert response.json['email_address'] == 'johndoe@example.com'
 
 def test_experience():
     '''
