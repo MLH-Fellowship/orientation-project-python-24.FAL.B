@@ -34,6 +34,9 @@ def test_experience():
     assert response.json[item_id] == example_experience
 
 def test_experience_post_success():
+    """
+    Test the successful creation of a new experience entry.
+    """
     new_experience = {
         "title": "Software Engineer",
         "company": "Tech Corp",
@@ -42,13 +45,16 @@ def test_experience_post_success():
         "description": "Full stack development",
         "logo": "tech-corp-logo.png"
     }
-    response = app.test_client().post('/resume/experience', 
+    response = app.test_client().post('/resume/experience',
                            json=new_experience)
     assert response.status_code == 201
     for key, value in response.json.items():
         assert new_experience[key] == value
 
 def test_experience_post_missing_fields():
+    """
+    Test the unsuccessful creation of a new experience entry because of missing fields.
+    """
     incomplete_experience = {
         "title": "Data Engineer",
         "company": "Google"
@@ -79,6 +85,9 @@ def test_education():
     assert response.json[item_id] == example_education
 
 def test_post_education_success():
+    """
+    Test the successful creation of a new education entry.
+    """
     new_education = {
         "course": "Master's in Computer Science",
         "school": "Tech University",
@@ -95,6 +104,9 @@ def test_post_education_success():
         assert new_education[key] == value
 
 def test_post_education_missing_fields():
+    """
+    Test the unsuccessful creation of a new education entry because of missing fields.
+    """
     incomplete_education = {
         "course": "PhD in Computer Science",
         "school": "Cornell University"
@@ -124,6 +136,9 @@ def test_skill():
     assert response.json[item_id] == example_skill
 
 def test_post_skill_success():
+    """
+    Test the successful creation of a new post entry.
+    """
     new_skill = {
         "name": "JavaScript",
         "proficiency": "3-4 Years",
@@ -137,6 +152,9 @@ def test_post_skill_success():
         assert new_skill[key] == value
 
 def test_post_skill_missing_fields():
+    """
+    Test the unsuccessful creation of a new skill entry because of missing fields.
+    """
     incomplete_skill = {
         "name": "JavaScript"
     }
