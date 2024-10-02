@@ -45,7 +45,10 @@ def experience():
     Handle experience requests
     '''
     if request.method == 'GET':
-        return jsonify()
+        experiences = {}
+        for idx, exp in enumerate(data['experience']):
+            experiences[str(idx)] = exp.__dict__
+        return jsonify(experiences)
 
     if request.method == 'POST':
         return jsonify({})
