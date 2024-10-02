@@ -1,7 +1,7 @@
 '''
 Flask Application
 '''
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request # type: ignore
 from models import Experience, Education, Skill
 
 app = Flask(__name__)
@@ -45,12 +45,20 @@ def experience():
     Handle experience requests
     '''
     if request.method == 'GET':
-        return jsonify()
+        experiences = {}
+        for idx, exp in enumerate(data['experience']):
+            experiences[str(idx)] = exp.__dict__
+        return jsonify(experiences)
 
     if request.method == 'POST':
-        return jsonify({})
+        experience_data = request.json
+        new_experience = Experience(**experience_data)
+        data['experience'].append(new_experience)
+        index = len(data['experience']) - 1
+        return jsonify({'id': str(index)}), 201
 
     return jsonify({})
+
 
 @app.route('/resume/education', methods=['GET', 'POST'])
 def education():
