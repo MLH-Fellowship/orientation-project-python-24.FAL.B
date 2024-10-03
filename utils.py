@@ -12,7 +12,7 @@ genai.configure(api_key=GOOGLE_API_KEY)
 
 def get_suggestion(description,type):
     '''
-    give suggestions for description section
+    give suggestions for description section using gemini (free alternative to openai's chatgpt api)
     '''
     
     if type=="education":
