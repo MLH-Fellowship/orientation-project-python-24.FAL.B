@@ -3,6 +3,7 @@ Flask Application
 '''
 from flask import Flask, jsonify, request
 from models import Experience, Education, Skill
+from utils import get_suggestion
 
 app = Flask(__name__)
 
@@ -78,3 +79,16 @@ def skill():
         return jsonify({})
 
     return jsonify({})
+
+@app.route('/suggestion', methods=['POST'])
+def suggestion():
+    '''
+    Handles suggestion requests
+    '''
+    description = request.json.get('description')
+    type = request.json.get('type')
+    if not description or not type:
+        return jsonify({"error": "Description and type are required"}), 400
+
+    suggestion = get_suggestion(description, type)
+    return jsonify({"suggestion": suggestion})
