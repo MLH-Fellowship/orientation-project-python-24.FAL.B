@@ -1,3 +1,5 @@
 flask
 pytest
 pylint
+google-generativeai
+python-dotenv
