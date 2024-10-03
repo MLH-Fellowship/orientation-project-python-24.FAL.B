@@ -84,7 +84,7 @@ def skill():
 
 
 @app.route("/suggestion", methods=["POST"])
-def suggestion():
+def get_description_suggestion():
     """
     Handles suggestion requests
     """
@@ -92,6 +92,5 @@ def suggestion():
     type = request.json.get("type")
     if not description or not type:
         return jsonify({"error": "Description and type are required"}), 400
-
     suggestion = get_suggestion(description, type)
     return jsonify({"suggestion": suggestion})

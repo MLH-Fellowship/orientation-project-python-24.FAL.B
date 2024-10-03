@@ -1,5 +1,8 @@
-import google.generativeai as genai
+'''
+Utility Methods File
+'''
 import os
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 
@@ -14,11 +17,13 @@ def get_suggestion(description, type):
     """
     give suggestions for description section using gemini (free alternative to openai's chatgpt api)
     """
-
+    prompt=""
     if type == "education":
-        prompt = f"Improve the following education experience description for resume: {description}"
+        prompt = f"Improve the following education 
+                  experience description for resume: {description}" 
     elif type == "experience":
-        prompt = f"Improve the following professional experience description for resume: {description}"
+        prompt = f"Improve the following professional 
+                  experience description for resume: {description}"
 
     model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content(prompt)
