@@ -3,7 +3,7 @@ Flask Application
 '''
 from flask import Flask, jsonify, request
 from models import Experience, Education, Skill, User
-from utils import check_phone_number
+from utils import check_phone_number, correct_spelling
 app = Flask(__name__)
 
 data = {
@@ -119,3 +119,17 @@ def skill():
         return jsonify({})
 
     return jsonify({})
+
+@app.route('/resume/spellcheck', methods=['POST'])
+def spellcheck():
+    '''
+    Corrects the spelling of a text
+    '''
+    body = request.get_json()
+    try:
+        text = body['text']
+        corrected_text = correct_spelling(text)
+        
+        return jsonify({"before": text, "after": corrected_text}), 200
+    except KeyError:
+        return jsonify({"error": "Missing text parameter"}), 400
