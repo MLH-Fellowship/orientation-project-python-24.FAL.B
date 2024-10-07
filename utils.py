@@ -14,7 +14,7 @@ def correct_spelling(text: str):
 
     spell_checker = SpellChecker()
     word_pattern = r'\w+|[^\w\s]'
-    
+
     misspelled = spell_checker.unknown(re.findall(word_pattern, text))
     corrected_text = text
 
@@ -22,5 +22,5 @@ def correct_spelling(text: str):
         correction = spell_checker.correction(word)
         if correction:
             corrected_text = corrected_text.replace(word, correction)
-    
+
     return corrected_text

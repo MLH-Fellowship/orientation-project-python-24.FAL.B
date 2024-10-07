@@ -129,7 +129,7 @@ def spellcheck():
     try:
         text = body['text']
         corrected_text = correct_spelling(text)
-        
+
         return jsonify({"before": text, "after": corrected_text}), 200
     except KeyError:
         return jsonify({"error": "Missing text parameter"}), 400
