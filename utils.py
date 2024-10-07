@@ -1,9 +1,11 @@
+
 '''
 Utility Methods File
 '''
 import os
 import google.generativeai as genai
 from dotenv import load_dotenv
+import re
 
 
 load_dotenv()
@@ -28,3 +30,13 @@ def get_suggestion(description, type):
     model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content(prompt)
     return response.text
+
+
+
+def check_phone_number(phone_number):
+    """ Checks if the phone number is valid and follows
+        the international country code
+    """
+    regex = re.compile(r'^\+\d{1,3}\d{1,14}$')
+    return bool(regex.match(phone_number))
+

@@ -6,6 +6,14 @@ Models for the Resume API. Each class is related to
 
 from dataclasses import dataclass
 
+@dataclass
+class User:
+    '''
+    User Class
+    '''
+    name: str
+    phone_number: str
+    email_address: str
 
 @dataclass
 class Experience:
