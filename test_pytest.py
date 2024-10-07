@@ -124,7 +124,9 @@ def test_skill():
     ('this is oppen-suorce project.',
         'this is open-source project.'),
     ('jldjldkwedwedweadncew',
-        'jldjldkwedwedweadncew')
+        'jldjldkwedwedweadncew'),
+    ('123', '123'),
+    ('', '')
 ])
 def test_correct_spelling(text, expected):
     '''
