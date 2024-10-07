@@ -90,7 +90,7 @@ def experience():
 
     if request.method == 'POST':
         return jsonify({})
-    
+
     if request.method == 'PUT':
         body = request.get_json()
         new_experience_order = []
@@ -102,7 +102,9 @@ def experience():
             description = exp['description']
             logo = exp['logo']
 
-            new_experience_order.append(Experience(title, company, start_date, end_date, description, logo))
+            new_experience_order.append(
+                Experience(title, company, start_date, end_date, description, logo)
+                )
         data['experience'] = new_experience_order
 
         return_data = [item.__dict__ for item in data['experience']]
@@ -120,7 +122,7 @@ def education():
 
     if request.method == 'POST':
         return jsonify({})
-    
+
     if request.method == 'PUT':
         body = request.get_json()
         new_education_order = []
@@ -149,7 +151,7 @@ def skill():
 
     if request.method == 'POST':
         return jsonify({})
-    
+
     if request.method == 'PUT':
         body = request.get_json()
         new_skill_order = []
