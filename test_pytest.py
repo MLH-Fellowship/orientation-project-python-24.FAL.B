@@ -1,8 +1,8 @@
 '''
 Tests in Pytest
 '''
+import pytest
 from app import app
-
 
 def test_client():
     '''
@@ -111,3 +111,27 @@ def test_skill():
 
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
+
+@pytest.mark.parametrize('text, expected', [
+    ('thiss is an exmple of spell chcking.',
+        'this is an example of spell checking.'),
+    ('I look forwrd to receving your response.',
+        'I look forward to receiving your response.'), 
+    ('plese let me knw if you need anythng else.',
+        'please let me know if you need anything else.'),
+    ("an apsirng softwar engneer,",
+        "an aspiring software engineer,"),
+    ('this is oppen-suorce project.',
+        'this is open-source project.'),
+    ('jldjldkwedwedweadncew',
+        'jldjldkwedwedweadncew'),
+    ('123', '123'),
+    ('', '')
+])
+def test_correct_spelling(text, expected):
+    '''
+    Test the correct_spelling function
+    '''
+    response = app.test_client().post('/resume/spellcheck', json={'text': text})
+    assert response.status_code == 200
+    assert response.json['after'] == expected
