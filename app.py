@@ -6,36 +6,7 @@ from models import Experience, Education, Skill, User
 from utils import check_phone_number, correct_spelling, load_data
 app = Flask(__name__)
 
-# TODO: data = load_data('data/resume.json')
-data = {
-    "user": [
-        User("Jackie Stewart",
-             "+4478322678",
-             "jack@resume.com")
-    ],
-    "experience": [
-        Experience("Software Developer",
-                   "A Cool Company",
-                   "October 2022",
-                   "Present",
-                   "Writing Python Code",
-                   "example-logo.png")
-    ],
-    "education": [
-        Education("Computer Science",
-                  "University of Tech",
-                  "September 2019",
-                  "July 2022",
-                  "80%",
-                  "example-logo.png")
-    ],
-    "skill": [
-        Skill("Python",
-              "1-2 Years",
-              "example-logo.png")
-    ]
-}
-
+data = load_data('data/resume.json')
 
 @app.route('/test')
 def hello_world():
@@ -46,40 +17,52 @@ def hello_world():
 
 @app.route('/resume/user', methods=['GET', 'POST', 'PUT'])
 def user():
-    '''
-    Handles User information
-    '''
+    """
+    Handle GET, POST, and PUT requests for user data.
+    GET: Retrieve all users
+    POST: Create a new user
+    PUT: Update an existing user
+    """
     if request.method == 'GET':
-        return jsonify([user.__dict__ for user in data['user']]), 200
-    # retrieve user's information.
+        return jsonify(data['user']), 200
+
     body = request.get_json()
+    if not body or not all(key in body for key in ['name', 'phone_number', 'email_address']):
+        return jsonify({"error": "Missing required fields"}), 400
+
     name = body['name']
     phone_number = body['phone_number']
     email = body['email_address']
+    
+    if not check_phone_number(phone_number):
+        return jsonify({"error": "Incorrect phone number"}), 400
 
-    # store the new user information.
     if request.method == 'POST':
-        if not check_phone_number(phone_number):
-            return jsonify({"error": "Incorrect phone number !"}), 400
-
-        new_user = User(name, phone_number, email)
+        # Create a new user and add it to the data
+        new_user = {
+            'name': name,
+            'phone_number': phone_number,
+            'email_address': email
+        }
+        
         data['user'].append(new_user)
-        return jsonify(new_user.__dict__), 201
-
-    # edit the user information.
+        return jsonify(new_user), 201
+    
     if request.method == 'PUT':
+        # Find the user by email and update their information
 
-        for i, user in enumerate(data['user']):  # find the user in the data.
-            if user.email_address == email:
-                if not check_phone_number(phone_number):
-                    return jsonify({"error": "Incorrect phone number !"}), 400
-
-                data['user'][i] = User(name, phone_number, email) # update the user's info.
-                return jsonify(data['user'][i].__dict__), 200
+        for i, user in enumerate(data['user']):
+            if user['email_address'] == email:
+                data['user'][i] = {
+                    'name': name,
+                    'phone_number': phone_number,
+                    'email_address': email
+                }
+                return jsonify(data['user'][i]), 200
 
         return jsonify({"error": "User not found !"}), 404
-    # add a default return statement for unsupported request methods
-    return jsonify({"error": "Unsupported request method !"}), 405
+
+    return jsonify({"error": "Unsupported request method"}), 405
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
 def experience():
