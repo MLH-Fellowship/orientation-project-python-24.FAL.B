@@ -1,4 +1,5 @@
 """ Util functions for the Flask App."""
+import json
 import re
 from spellchecker import SpellChecker
 
@@ -25,6 +26,19 @@ def correct_spelling(text: str):
 
     return corrected_text
 
-# TODO: function to load json file
-def load_data():
-    pass
+def load_data(file_path):
+    """ Loads the json file """
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            print(f"Successfully loaded data from {file_path}")
+            return data
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return None
+    except json.JSONDecodeError:
+        print(f"Error: The file {file_path} contains invalid JSON.")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
