@@ -6,6 +6,7 @@ from flask import Flask, jsonify, request
 from utils import check_phone_number, correct_spelling, load_data
 app = Flask(__name__)
 
+
 data = load_data('data/resume.json')
 
 @app.route('/test')
@@ -67,10 +68,20 @@ def experience():
     Handle experience requests
     '''
     if request.method == 'GET':
-        return jsonify()
+        return jsonify({"experience": [exp.__dict__ for exp in data["experience"]]})
 
     if request.method == 'POST':
-        return jsonify({})
+        new_experience = request.json
+        experience_instance = Experience(
+            new_experience["title"],
+            new_experience["company"],
+            new_experience["start_date"],
+            new_experience["end_date"],
+            new_experience["description"],
+            new_experience["logo"]
+        )
+        data["experience"].append(experience_instance)
+        return jsonify({"id": len(data["experience"]) - 1})
 
     return jsonify({})
 
@@ -80,10 +91,20 @@ def education():
     Handles education requests
     '''
     if request.method == 'GET':
-        return jsonify({})
+        return jsonify({"education": [edu.__dict__ for edu in data["education"]]})
 
     if request.method == 'POST':
-        return jsonify({})
+        new_education = request.json
+        education_instance = Education(
+            new_education["course"],
+            new_education["school"],
+            new_education["start_date"],
+            new_education["end_date"],
+            new_education["grade"],
+            new_education["logo"]
+        )
+        data["education"].append(education_instance)
+        return jsonify({"id": len(data["education"]) - 1})
 
     return jsonify({})
 
@@ -94,10 +115,13 @@ def skill():
     Handles Skill requests
     '''
     if request.method == 'GET':
-        return jsonify({})
+        return jsonify({"skills": [skill.__dict__ for skill in data["skill"]]})
 
     if request.method == 'POST':
-        return jsonify({})
+        new_skill = request.json
+        skill_instance = Skill(new_skill["name"], new_skill["proficiency"], new_skill["logo"])
+        data["skill"].append(skill_instance)
+        return jsonify({"id": len(data["skill"]) - 1})
 
     return jsonify({})
 
