@@ -112,6 +112,88 @@ def test_skill():
     response = app.test_client().get('/resume/skill')
     assert response.json[item_id] == example_skill
 
+def test_get_project():
+    '''
+    Test the get_project function
+
+    Check that it returns a list of projects
+    '''
+    response = app.test_client().get('/resume/project')
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+def test_add_project():
+    '''
+    Test the add_project function
+
+    Check that it returns the new project
+    Check that it returns an error when missing fields
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    response = app.test_client().post('/resume/project', json=new_project)
+    assert response.status_code == 201
+    assert response.json == {**new_project, 'id': '1'}
+
+    new_project.pop('title')
+    response = app.test_client().post('/resume/project', json=new_project)
+    assert response.status_code == 400
+    assert response.json == {'error': 'Missing fields: title'}
+
+def test_edit_project():
+    '''
+    Test the edit_project function
+
+    Check that it returns the updated project
+    Check that it returns an error when the project id is invalid
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    new_project_id = app.test_client().post('/resume/project', json=new_project).json['id']
+    new_project['title'] = 'New Project'
+    new_project['description'] = 'A new project'
+    new_project['technologies'] = ['Python', 'Flask', 'Docker']
+
+    response = app.test_client().\
+                    put('/resume/project', json=new_project, query_string={'id': new_project_id})
+
+    assert response.status_code == 200
+    assert response.json == {**new_project, 'id': new_project_id}
+
+    response = app.test_client().\
+                        put('/resume/project', json=new_project, query_string={'id': 'invalid-id'})
+    assert response.status_code == 400
+    assert response.json == {'error': 'Invalid id'}
+
+def test_delete_project():
+    '''
+    Test the delete_project function
+
+    Check that it returns a 204 status code
+    Check that it returns an error when the project id is invalid
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    new_project_id = app.test_client().post('/resume/project', json=new_project).json['id']
+    response = app.test_client().delete('/resume/project', query_string={'id': new_project_id})
+    assert response.status_code == 204
+
+    response = app.test_client().delete('/resume/project', query_string={'id': 'invalid-id'})
+    assert response.status_code == 400
+    assert response.json == {'error': 'Invalid id'}
+
 @pytest.mark.parametrize('text, expected', [
     ('thiss is an exmple of spell chcking.',
         'this is an example of spell checking.'),
