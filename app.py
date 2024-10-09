@@ -3,9 +3,10 @@ Flask Application
 '''
 from flask import Flask, jsonify, request
 from models import Experience, Education, Skill, User
-from utils import check_phone_number, correct_spelling
+from utils import check_phone_number, correct_spelling, load_data
 app = Flask(__name__)
 
+# TODO: data = load_data('data/resume.json')
 data = {
     "user": [
         User("Jackie Stewart",

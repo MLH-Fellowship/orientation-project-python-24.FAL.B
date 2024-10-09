@@ -24,3 +24,7 @@ def correct_spelling(text: str):
             corrected_text = corrected_text.replace(word, correction)
 
     return corrected_text
+
+# TODO: function to load json file
+def load_data():
+    pass
