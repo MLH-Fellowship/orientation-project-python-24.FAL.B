@@ -5,6 +5,7 @@ Models for the Resume API. Each class is related to
 '''
 
 from dataclasses import dataclass
+from typing import List
 
 @dataclass
 class User:
@@ -49,3 +50,13 @@ class Skill:
     name: str
     proficiency: str
     logo: str
+
+@dataclass
+class Project:
+    '''
+    Project Class
+    '''
+    title: str
+    description: str
+    technologies: List[str]
+    link: str
