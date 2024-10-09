@@ -2,7 +2,7 @@
 Flask Application
 '''
 from flask import Flask, jsonify, request
-from models import Experience, Education, Skill, User
+#from models import Experience, Education, Skill, User
 from utils import check_phone_number, correct_spelling, load_data
 app = Flask(__name__)
 
@@ -33,7 +33,6 @@ def user():
     name = body['name']
     phone_number = body['phone_number']
     email = body['email_address']
-    
     if not check_phone_number(phone_number):
         return jsonify({"error": "Incorrect phone number"}), 400
 
@@ -44,10 +43,8 @@ def user():
             'phone_number': phone_number,
             'email_address': email
         }
-        
         data['user'].append(new_user)
         return jsonify(new_user), 201
-    
     if request.method == 'PUT':
         # Find the user by email and update their information
 

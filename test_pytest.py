@@ -143,6 +143,9 @@ def test_correct_spelling(text, expected):
 
 @pytest.fixture
 def setup_teardown():
+    '''
+    Setup temporary file to test load_data
+    '''
     # Create a temporary directory and file for testing
     with tempfile.TemporaryDirectory() as temp_dir:
         test_file_path = os.path.join(temp_dir, 'test_resume.json')
@@ -188,6 +191,9 @@ def setup_teardown():
         yield test_file_path, test_data
 
 def test_load_data(setup_teardown):
+    '''
+    Test the load_data util function
+    '''
     test_file_path, test_data = setup_teardown
 
     # Test if the load_data function successfully loads the data
