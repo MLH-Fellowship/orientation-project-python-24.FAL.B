@@ -70,7 +70,7 @@ def test_experience():
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.json["experience"][item_id] == example_experience
 
 
 def test_education():
@@ -91,7 +91,7 @@ def test_education():
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.json["education"][item_id] == example_education
 
 
 def test_skill():
@@ -110,7 +110,8 @@ def test_skill():
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill
+
 
 @pytest.mark.parametrize('text, expected', [
     ('thiss is an exmple of spell chcking.',
