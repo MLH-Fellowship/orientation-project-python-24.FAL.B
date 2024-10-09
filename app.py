@@ -54,36 +54,43 @@ def user():
     '''
     Handles User information
     '''
-    if request.method == 'GET':
+    # defining sub function to reduce number of returns
+    def get_users():
         return jsonify([user.__dict__ for user in data['user']]), 200
-    # retrieve user's information.
-    body = request.get_json()
-    name = body['name']
-    phone_number = body['phone_number']
-    email = body['email_address']
 
-    # store the new user information.
-    if request.method == 'POST':
+    def add_user(body):
+        # retrieve user's information.
+        name = body['name']
+        phone_number = body['phone_number']
+        email = body['email_address']
+        # store the new user information.
         if not check_phone_number(phone_number):
             return jsonify({"error": "Incorrect phone number !"}), 400
-
         new_user = User(name, phone_number, email)
         data['user'].append(new_user)
         return jsonify(new_user.__dict__), 201
 
     # edit the user information.
-    if request.method == 'PUT':
-
-        for i, user in enumerate(data['user']):  # find the user in the data.
-            if user.email_address == email:
+    def edit_user(body):
+        name = body['name']
+        phone_number = body['phone_number']
+        email = body['email_address']
+        for i, user_ in enumerate(data['user']):
+            if user_.email_address == email:
                 if not check_phone_number(phone_number):
                     return jsonify({"error": "Incorrect phone number !"}), 400
-
-                data['user'][i] = User(name, phone_number, email) # update the user's info.
+                data['user'][i] = User(name, phone_number, email)
                 return jsonify(data['user'][i].__dict__), 200
-
         return jsonify({"error": "User not found !"}), 404
-    # add a default return statement for unsupported request methods
+
+    if request.method == 'GET':
+        return get_users()
+    if request.method == 'POST':
+        body = request.get_json()
+        return add_user(body)
+    if request.method == 'PUT':
+        body = request.get_json()
+        return edit_user(body)
     return jsonify({"error": "Unsupported request method !"}), 405
 
 @app.route('/resume/experience', methods=['GET', 'POST'])
