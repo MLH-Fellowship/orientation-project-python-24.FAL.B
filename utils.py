@@ -3,10 +3,10 @@ Utility Methods File
 """
 
 import os
-import google.generativeai as genai
-from dotenv import load_dotenv
 import re
 from spellchecker import SpellChecker
+import google.generativeai as genai
+from dotenv import load_dotenv
 
 
 load_dotenv()
@@ -16,15 +16,17 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
-def get_suggestion(description, type):
+def get_suggestion(description, descriptionType):
     """
     give suggestions for description section using gemini (free alternative to openai's chatgpt api)
     """
     prompt = ""
-    if type == "education":
-        prompt = f"Improve the following education experience description for resume: {description}"
-    elif type == "experience":
-        prompt = f"Improve the following professional experience description for resume: {description}"
+    if descriptionType == "education":
+        prompt = f"Improve the following education \
+        experience description for resume: {description}"
+    elif descriptionType == "experience":
+        prompt = f"Improve the following professional \
+         experience description for resume: {description}"
 
     model = genai.GenerativeModel("gemini-pro")
     response = model.generate_content(prompt)

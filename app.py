@@ -104,7 +104,8 @@ def experience():
     """
 
     if request.method == "GET":
-        return jsonify({"experience": [exp.__dict__ for exp in data["experience"]]})
+        return jsonify(
+            {"experience": [exp.__dict__ for exp in data["experience"]]})
 
     if request.method == "POST":
         new_experience = request.json
@@ -128,7 +129,8 @@ def education():
     Handles education requests
     """
     if request.method == "GET":
-        return jsonify({"education": [edu.__dict__ for edu in data["education"]]})
+        return jsonify(
+            {"education": [edu.__dict__ for edu in data["education"]]})
 
     if request.method == "POST":
         new_education = request.json
@@ -187,8 +189,8 @@ def get_description_suggestion():
     Handles suggestion requests
     """
     description = request.json.get("description")
-    type = request.json.get("type")
-    if not description or not type:
+    descriptionType = request.json.get("type")
+    if not description or not descriptionType:
         return jsonify({"error": "Description and type are required"}), 400
-    suggestion = get_suggestion(description, type)
+    suggestion = get_suggestion(description, descriptionType)
     return jsonify({"suggestion": suggestion})
