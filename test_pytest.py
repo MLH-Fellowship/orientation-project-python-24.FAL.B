@@ -1,9 +1,10 @@
 '''
 Tests in Pytest
 '''
-from app import app
-import pytest
 from unittest.mock import patch
+import pytest
+from app import app
+
 
 
 def test_client():
