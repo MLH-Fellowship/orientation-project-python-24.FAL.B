@@ -138,7 +138,7 @@ def test_correct_spelling(text, expected):
     assert response.json['after'] == expected
 
 # testcases for ai suggested imrpvoed descriptions
-@patch('app.get_suggestion')
+
 def test_get_description_suggestion(mock_get_suggestion):
     '''
     Test the /suggestion route with valid inputs
