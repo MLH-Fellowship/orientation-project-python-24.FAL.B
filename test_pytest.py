@@ -1,8 +1,8 @@
 '''
 Tests in Pytest
 '''
+import pytest
 from app import app
-
 
 def test_client():
     '''
@@ -70,7 +70,7 @@ def test_experience():
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.json["experience"][item_id] == example_experience
 
 
 def test_education():
@@ -91,7 +91,7 @@ def test_education():
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.json["education"][item_id] == example_education
 
 
 def test_skill():
@@ -110,4 +110,29 @@ def test_skill():
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill
+
+
+@pytest.mark.parametrize('text, expected', [
+    ('thiss is an exmple of spell chcking.',
+        'this is an example of spell checking.'),
+    ('I look forwrd to receving your response.',
+        'I look forward to receiving your response.'), 
+    ('plese let me knw if you need anythng else.',
+        'please let me know if you need anything else.'),
+    ("an apsirng softwar engneer,",
+        "an aspiring software engineer,"),
+    ('this is oppen-suorce project.',
+        'this is open-source project.'),
+    ('jldjldkwedwedweadncew',
+        'jldjldkwedwedweadncew'),
+    ('123', '123'),
+    ('', '')
+])
+def test_correct_spelling(text, expected):
+    '''
+    Test the correct_spelling function
+    '''
+    response = app.test_client().post('/resume/spellcheck', json={'text': text})
+    assert response.status_code == 200
+    assert response.json['after'] == expected
