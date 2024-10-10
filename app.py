@@ -3,8 +3,6 @@ Flask Application
 """
 
 from flask import Flask, jsonify, request
-
-
 from models import Experience, Education, Skill,User
 from utils import get_suggestion,check_phone_number,correct_spelling
 
@@ -102,10 +100,12 @@ def user():
 
 @app.route("/resume/experience", methods=["GET", "POST"])
 def experience():
+    """ 
+     Handle experience requests
     """
-    Handle experience requests
+   
 
-    '''
+   
     if request.method == 'GET':
         return jsonify({"experience": [exp.__dict__ for exp in data["experience"]]})
 
@@ -130,8 +130,7 @@ def experience():
 def education():
     """
     Handles education requests
-
-    '''
+    """
     if request.method == 'GET':
         return jsonify({"education": [edu.__dict__ for edu in data["education"]]})
 
@@ -156,7 +155,8 @@ def education():
 def skill():
     """
     Handles Skill requests
-    '''
+   """
+
     if request.method == 'GET':
         return jsonify({"skills": [skill.__dict__ for skill in data["skill"]]})
 
