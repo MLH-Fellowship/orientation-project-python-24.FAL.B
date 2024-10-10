@@ -1,8 +1,8 @@
 '''
 Tests in Pytest
 '''
-import pytest
 from app import app
+import pytest
 from unittest.mock import patch
 
 
