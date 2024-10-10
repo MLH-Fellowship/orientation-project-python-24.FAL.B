@@ -1,10 +1,15 @@
 '''
 Tests in Pytest
 '''
-from unittest.mock import patch
+
+import os
+import json
+import tempfile
 import pytest
 from app import app
 
+from utils import load_data
+from unittest.mock import patch
 
 
 def test_client():
@@ -139,8 +144,83 @@ def test_correct_spelling(text, expected):
     response = app.test_client().post('/resume/spellcheck', json={'text': text})
     assert response.status_code == 200
     assert response.json['after'] == expected
+    
+@pytest.fixture
+def setup_teardown():
+    '''
+    Setup temporary file to test load_data
+    '''
+    # Create a temporary directory and file for testing
+    with tempfile.TemporaryDirectory() as temp_dir:
+        test_file_path = os.path.join(temp_dir, 'test_resume.json')
+        test_data = {
+            "user": [
+                {
+                    "name": "Jackie Stewart",
+                    "phone_number": "+4478322678",
+                    "email_address": "jack@resume.com"
+                }
+            ],
+            "experience": [
+                {
+                    "title": "Software Developer",
+                    "company": "A Cool Company",
+                    "start_date": "October 2022",
+                    "end_date": "Present",
+                    "description": "Writing Python Code",
+                    "logo": "example-logo.png"
+                }
+            ],
+            "education": [
+                {
+                    "degree": "Computer Science",
+                    "institution": "University of Tech",
+                    "start_date": "September 2019",
+                    "end_date": "July 2022",
+                    "grade": "80%",
+                    "logo": "example-logo.png"
+                }
+            ],
+            "skill": [
+                {
+                    "name": "Python",
+                    "experience": "1-2 Years",
+                    "logo": "example-logo.png"
+                }
+            ]
+        }
+        with open(test_file_path, 'w') as file:
+            json.dump(test_data, file)
 
-# testcases for ai suggested imrpvoed descriptions
+        yield test_file_path, test_data
+
+def test_load_data(setup_teardown):
+    '''
+    Test the load_data util function
+    '''
+    test_file_path, test_data = setup_teardown
+
+    # Test if the load_data function successfully loads the data
+    data = load_data(test_file_path)
+    assert data == test_data
+
+    # Test if the load_data function handles file not found
+    non_existent_file = os.path.join(tempfile.gettempdir(), 'non_existent_file.json')
+    data = load_data(non_existent_file)
+    assert data is None
+
+    # Test if the load_data function handles invalid JSON
+    invalid_json_file = os.path.join(tempfile.gettempdir(), 'invalid_resume.json')
+    with open(invalid_json_file, 'w') as file:
+        file.write('{invalid_json}')
+
+    data = load_data(invalid_json_file)
+    assert data is None
+
+    if os.path.exists(invalid_json_file):
+        os.remove(invalid_json_file)
+        
+# testcases for ai suggested improved descriptions
 @patch('app.get_suggestion')
 def test_get_description_suggestion(mock_get_suggestion):
     '''
@@ -174,3 +254,4 @@ def test_get_description_suggestion_missing_fields():
     })
     assert response.status_code == 400
     assert response.json['error'] == 'Description and type are required'
+

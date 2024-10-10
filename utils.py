@@ -1,9 +1,9 @@
 """
 Utility Methods File
 """
-
 import os
 import re
+import json
 from spellchecker import SpellChecker
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -56,3 +56,20 @@ def correct_spelling(text: str):
             corrected_text = corrected_text.replace(word, correction)
 
     return corrected_text
+
+def load_data(file_path):
+    """ Loads the json file """
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            print(f"Successfully loaded data from {file_path}")
+            return data
+    except FileNotFoundError:
+        print(f"Error: The file {file_path} was not found.")
+        return None
+    except json.JSONDecodeError:
+        print(f"Error: The file {file_path} contains invalid JSON.")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return None
