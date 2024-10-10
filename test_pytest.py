@@ -1,8 +1,11 @@
 '''
 Tests in Pytest
 '''
+from unittest.mock import patch
 import pytest
 from app import app
+
+
 
 def test_client():
     '''
@@ -136,3 +139,38 @@ def test_correct_spelling(text, expected):
     response = app.test_client().post('/resume/spellcheck', json={'text': text})
     assert response.status_code == 200
     assert response.json['after'] == expected
+
+# testcases for ai suggested imrpvoed descriptions
+@patch('app.get_suggestion')
+def test_get_description_suggestion(mock_get_suggestion):
+    '''
+    Test the /suggestion route with valid inputs
+    '''
+    mock_get_suggestion.return_value = "Improved description"
+
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.',
+        'type': 'experience'
+    })
+
+    assert response.status_code == 200
+    assert response.json['suggestion'] == 'Improved description'
+
+
+def test_get_description_suggestion_missing_fields():
+    '''
+    Test the /suggestion route with missing fields
+    '''
+    # Missing 'type'
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
+
+    # Missing 'description'
+    response = app.test_client().post('/suggestion', json={
+        'type': 'experience'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
