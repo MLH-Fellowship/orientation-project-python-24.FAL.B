@@ -1,6 +1,7 @@
 '''
 Tests in Pytest
 '''
+
 import os
 import json
 import tempfile
@@ -8,6 +9,8 @@ import pytest
 from app import app
 
 from utils import load_data
+from unittest.mock import patch
+
 
 def test_client():
     '''
@@ -141,7 +144,7 @@ def test_correct_spelling(text, expected):
     response = app.test_client().post('/resume/spellcheck', json={'text': text})
     assert response.status_code == 200
     assert response.json['after'] == expected
-
+    
 @pytest.fixture
 def setup_teardown():
     '''
@@ -216,3 +219,39 @@ def test_load_data(setup_teardown):
 
     if os.path.exists(invalid_json_file):
         os.remove(invalid_json_file)
+        
+# testcases for ai suggested improved descriptions
+@patch('app.get_suggestion')
+def test_get_description_suggestion(mock_get_suggestion):
+    '''
+    Test the /suggestion route with valid inputs
+    '''
+    mock_get_suggestion.return_value = "Improved description"
+
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.',
+        'type': 'experience'
+    })
+
+    assert response.status_code == 200
+    assert response.json['suggestion'] == 'Improved description'
+
+
+def test_get_description_suggestion_missing_fields():
+    '''
+    Test the /suggestion route with missing fields
+    '''
+    # Missing 'type'
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
+
+    # Missing 'description'
+    response = app.test_client().post('/suggestion', json={
+        'type': 'experience'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
+
