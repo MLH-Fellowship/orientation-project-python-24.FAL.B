@@ -189,8 +189,8 @@ def get_description_suggestion():
     Handles suggestion requests
     """
     description = request.json.get("description")
-    descriptionType = request.json.get("type")
-    if not description or not descriptionType:
+    description_type = request.json.get("type")
+    if not description or not description_type:
         return jsonify({"error": "Description and type are required"}), 400
-    suggestion = get_suggestion(description, descriptionType)
+    suggestion = get_suggestion(description, description_type)
     return jsonify({"suggestion": suggestion})

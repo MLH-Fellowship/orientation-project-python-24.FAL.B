@@ -16,15 +16,15 @@ GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=GOOGLE_API_KEY)
 
 
-def get_suggestion(description, descriptionType):
+def get_suggestion(description, description_type):
     """
     give suggestions for description section using gemini (free alternative to openai's chatgpt api)
     """
     prompt = ""
-    if descriptionType == "education":
+    if description_type == "education":
         prompt = f"Improve the following education \
         experience description for resume: {description}"
-    elif descriptionType == "experience":
+    elif description_type == "experience":
         prompt = f"Improve the following professional \
          experience description for resume: {description}"
 
