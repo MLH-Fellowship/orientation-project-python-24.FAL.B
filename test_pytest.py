@@ -1,8 +1,11 @@
 '''
 Tests in Pytest
 '''
+from unittest.mock import patch
 import pytest
 from app import app
+
+
 
 def test_client():
     '''
@@ -70,7 +73,7 @@ def test_experience():
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json[item_id] == example_experience
+    assert response.json["experience"][item_id] == example_experience
 
 
 def test_education():
@@ -91,7 +94,7 @@ def test_education():
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json[item_id] == example_education
+    assert response.json["education"][item_id] == example_education
 
 
 def test_skill():
@@ -110,7 +113,8 @@ def test_skill():
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json[item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill
+
 
 def test_get_project():
     '''
@@ -217,3 +221,38 @@ def test_correct_spelling(text, expected):
     response = app.test_client().post('/resume/spellcheck', json={'text': text})
     assert response.status_code == 200
     assert response.json['after'] == expected
+
+# testcases for ai suggested imrpvoed descriptions
+@patch('app.get_suggestion')
+def test_get_description_suggestion(mock_get_suggestion):
+    '''
+    Test the /suggestion route with valid inputs
+    '''
+    mock_get_suggestion.return_value = "Improved description"
+
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.',
+        'type': 'experience'
+    })
+
+    assert response.status_code == 200
+    assert response.json['suggestion'] == 'Improved description'
+
+
+def test_get_description_suggestion_missing_fields():
+    '''
+    Test the /suggestion route with missing fields
+    '''
+    # Missing 'type'
+    response = app.test_client().post('/suggestion', json={
+        'description': 'This is a sample description.'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
+
+    # Missing 'description'
+    response = app.test_client().post('/suggestion', json={
+        'type': 'experience'
+    })
+    assert response.status_code == 400
+    assert response.json['error'] == 'Description and type are required'
