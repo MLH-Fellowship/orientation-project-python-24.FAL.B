@@ -82,7 +82,7 @@ def experience():
         )
         data["experience"].append(experience_instance)
         return jsonify({"id": len(data["experience"]) - 1}), 201
-            
+
     if request.method == 'PUT':
         body = request.get_json()
         new_experience_order = []
@@ -98,7 +98,7 @@ def experience():
                 Experience(title, company, start_date, end_date, description, logo)
             )
         data['experience'] = new_experience_order
-        return_data = list(data['experience'])       
+        return_data = list(data['experience'])
         return jsonify(return_data), 200
 
     return jsonify({"error": "Unsupported request method !"}), 405
@@ -125,7 +125,7 @@ def education():
         )
         data["education"].append(education_instance)
         return jsonify({"id": len(data["education"]) - 1}), 201
-      
+
     if request.method == 'PUT':
         body = request.get_json()
         new_education_order = []
@@ -164,7 +164,7 @@ def skill():
         )
         data["skill"].append(skill_instance)
         return jsonify({"id": len(data["skill"]) - 1}), 201
-      
+
     if request.method == 'PUT':
         body = request.get_json()
         new_skill_order = []
