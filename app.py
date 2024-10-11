@@ -1,10 +1,9 @@
 """
 Flask Application
 """
-
 from flask import Flask, jsonify, request
-#from models import Experience, Education, Skill, User
-from utils import check_phone_number, correct_spelling, load_data
+from models import Experience, Education, Skill, User
+from utils import check_phone_number, correct_spelling, get_suggestion, load_data
 app = Flask(__name__)
 
 
@@ -72,7 +71,7 @@ def experience():
 
     if request.method == "GET":
         return jsonify(
-            {"experience": [exp.__dict__ for exp in data["experience"]]})
+            {"experience": [exp for exp in data["experience"]]})
 
     if request.method == "POST":
         new_experience = request.json
@@ -97,7 +96,7 @@ def education():
     """
     if request.method == "GET":
         return jsonify(
-            {"education": [edu.__dict__ for edu in data["education"]]})
+            {"education": [edu for edu in data["education"]]})
 
     if request.method == "POST":
         new_education = request.json
@@ -122,7 +121,7 @@ def skill():
     """
 
     if request.method == "GET":
-        return jsonify({"skills": [skill.__dict__ for skill in data["skill"]]})
+        return jsonify({"skills": [skill for skill in data["skill"]]})
 
     if request.method == "POST":
         new_skill = request.json
