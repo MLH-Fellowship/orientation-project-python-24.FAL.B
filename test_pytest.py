@@ -144,7 +144,7 @@ def test_correct_spelling(text, expected):
     response = app.test_client().post('/resume/spellcheck', json={'text': text})
     assert response.status_code == 200
     assert response.json['after'] == expected
-    
+
 @pytest.fixture
 def setup_teardown():
     '''
@@ -219,7 +219,6 @@ def test_load_data(setup_teardown):
 
     if os.path.exists(invalid_json_file):
         os.remove(invalid_json_file)
-        
 # testcases for ai suggested improved descriptions
 @patch('app.get_suggestion')
 def test_get_description_suggestion(mock_get_suggestion):
@@ -254,4 +253,3 @@ def test_get_description_suggestion_missing_fields():
     })
     assert response.status_code == 400
     assert response.json['error'] == 'Description and type are required'
-

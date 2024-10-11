@@ -2,7 +2,7 @@
 Flask Application
 """
 from flask import Flask, jsonify, request
-from models import Experience, Education, Skill, User
+from models import Experience, Education, Skill
 from utils import check_phone_number, correct_spelling, get_suggestion, load_data
 app = Flask(__name__)
 
@@ -15,7 +15,7 @@ def hello_world():
     Returns a JSON test message
     """
     return jsonify({"message": "Hello, World!"})
-  
+
 @app.route("/resume/user", methods=["GET", "POST", "PUT"])
 def user():
     """
