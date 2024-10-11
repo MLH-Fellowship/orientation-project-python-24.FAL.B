@@ -103,17 +103,19 @@ def experience():
     Handle experience requests
     """
     if request.method == 'GET':
-        return jsonify()
+        return jsonify(
+            {"experience": [exp.__dict__ for exp in data["experience"]]})
 
     if request.method == "POST":
         new_experience = request.json
+        new_exp = new_experience["data"][0]
         experience_instance = Experience(
-            new_experience["title"],
-            new_experience["company"],
-            new_experience["start_date"],
-            new_experience["end_date"],
-            new_experience["description"],
-            new_experience["logo"],
+            new_exp["title"],
+            new_exp["company"],
+            new_exp["start_date"],
+            new_exp["end_date"],
+            new_exp["description"],
+            new_exp["logo"],
         )
         data["experience"].append(experience_instance)
         return jsonify({"id": len(data["experience"]) - 1})
@@ -139,23 +141,25 @@ def experience():
 
     return jsonify({"error": "Unsupported request method !"}), 405
 
-@app.route('/resume/education', methods=['GET', 'POST'])
+@app.route('/resume/education', methods=['GET', 'POST', 'PUT'])
 def education():
     """
     Handles education requests
     """
     if request.method == 'GET':
-        return jsonify({})
-
+        return jsonify(
+            {"education": [edu.__dict__ for edu in data["education"]]})
+    
     if request.method == "POST":
         new_education = request.json
+        new_edu = new_education["data"][0]
         education_instance = Education(
-            new_education["course"],
-            new_education["school"],
-            new_education["start_date"],
-            new_education["end_date"],
-            new_education["grade"],
-            new_education["logo"],
+            new_edu["course"],
+            new_edu["school"],
+            new_edu["start_date"],
+            new_edu["end_date"],
+            new_edu["grade"],
+            new_edu["logo"],
         )
         data["education"].append(education_instance)
         return jsonify({"id": len(data["education"]) - 1})
@@ -189,8 +193,11 @@ def skill():
 
     if request.method == "POST":
         new_skill = request.json
+        skill_data = new_skill["data"][0]
         skill_instance = Skill(
-            new_skill["name"], new_skill["proficiency"], new_skill["logo"]
+            skill_data["name"], 
+            skill_data["proficiency"], 
+            skill_data["logo"]
         )
         data["skill"].append(skill_instance)
         return jsonify({"id": len(data["skill"]) - 1})

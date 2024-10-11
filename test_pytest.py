@@ -77,7 +77,8 @@ def test_experience():
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json["experience"][item_id] == example_experience
+    print(response.json)
+    assert response.json["experience"][item_id] == example_experience['data'][0]
 
     # test PUT request
     response = app.test_client().put('/resume/experience', json={"data": [
@@ -119,7 +120,7 @@ def test_education():
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json["education"][item_id] == example_education
+    assert response.json["education"][item_id] == example_education['data'][0]
 
     response = app.test_client().put('/resume/education', json={
         "data": [
@@ -149,17 +150,18 @@ def test_skill():
     
     Check that it returns the new skill in that list
     '''
-    example_skill = {
+    example_skill = { "data":[{
         "name": "JavaScript",
         "proficiency": "2-4 years",
         "logo": "example-logo.png"
+    }]
     }
 
     item_id = app.test_client().post('/resume/skill',
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json["skills"][item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill["data"][0]
 
     response = app.test_client().put('/resume/skill', json={
         "data": [
