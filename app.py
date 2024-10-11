@@ -3,7 +3,7 @@ Flask Application
 """
 
 from flask import Flask, jsonify, request
-from models import Experience, Education, Skill, User
+from models import Experience, Education, Project, Skill, User
 from utils import get_suggestion, check_phone_number, correct_spelling
 
 
@@ -39,7 +39,19 @@ data = {
             "example-logo.png",
         )
     ],
-    "skill": [Skill("Python", "1-2 Years", "example-logo.png")],
+    "skill": [
+        Skill("Python",
+              "1-2 Years",
+              "example-logo.png")
+    ],
+    "project": [
+        Project(
+                title="Sample Project",
+                description="A sample project",
+                technologies=["Python", "Flask"],
+                link="https://github.com/username/sample-project"
+        )
+    ]
 }
 
 
@@ -167,6 +179,114 @@ def skill():
 
     return jsonify({})
 
+
+@app.route('/resume/project', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def project():
+    '''
+    Handles Project requests
+    '''
+    def validate_id(project_id):
+        '''
+        Validates the id
+        '''
+        if project_id is None:
+            raise ValueError("Missing id")
+
+        if not project_id.isdigit():
+            raise ValueError("Invalid id")
+
+        # check if the id is within the range of the project list
+        int_id = int(project_id)
+        if int_id < 0 or int_id >= len(data['project']):
+            raise ValueError("Project not found")
+
+        return int_id
+
+    def get_project(project_id):
+        '''
+        Get project by id
+        '''
+        if project_id is not None:
+            try:
+                project_id = validate_id(project_id)
+                return jsonify(data['project'][project_id]), 200
+            except ValueError as error:
+                return jsonify({"error": str(error)}), 400
+
+        return jsonify([
+                        {**project.__dict__, "id": str(index)}
+                        for index, project in enumerate(data['project'])
+                ]), 200
+
+    def add_project(body):
+        '''
+        Add project
+        '''
+        mandatory_fields = ['title', 'description', 'technologies', 'link']
+        missing_fields = [field for field in mandatory_fields if field not in body]
+
+        if missing_fields:
+            return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
+        new_project = Project(
+                            body['title'],
+                            body['description'],
+                            body['technologies'],
+                            body['link']
+                        )
+        data['project'].append(new_project)
+
+        return jsonify({**new_project.__dict__, "id": str(len(data['project']) - 1)}), 201
+
+    def edit_project(project_id, body):
+        '''
+        Edit project
+        '''
+        try:
+            project_id = validate_id(project_id)
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+
+        for key, value in body.items():
+            if hasattr(data['project'][project_id], key):
+                setattr(data['project'][project_id], key, value)
+            else:
+                return jsonify({"error": f"invalid field: {key}"}), 400
+
+        return jsonify({**data['project'][project_id].__dict__, "id": str(project_id)}), 200
+
+    def delete_project(project_id):
+        '''
+        Delete project
+        '''
+        try:
+            project_id = validate_id(project_id)
+        except ValueError as error:
+            return jsonify({"error": str(error)}), 400
+
+        del data['project'][project_id]
+        return jsonify({}), 204
+
+    if request.method == 'GET':
+        project_id = request.args.get('id', None)
+        return get_project(project_id)
+
+    if request.method == 'POST':
+        body = request.get_json()
+        return add_project(body)
+
+    if request.method == 'PUT':
+        project_id = request.args.get('id', None)
+        body = request.get_json()
+
+        return edit_project(project_id, body)
+
+    if request.method == 'DELETE':
+        project_id = request.args.get('id', None)
+
+        return delete_project(project_id)
+
+    return jsonify({"error": "Unsupported request method"}), 405
 
 @app.route("/resume/spellcheck", methods=["POST"])
 def spellcheck():
