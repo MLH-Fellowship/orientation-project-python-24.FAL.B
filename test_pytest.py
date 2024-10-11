@@ -149,7 +149,7 @@ def test_correct_spelling(text, expected):
 
 
 @pytest.fixture
-def resume_data_fixture():
+def unique_resume_data_fixture():
     '''
     Setup temporary file to test load_data
     '''
@@ -198,11 +198,11 @@ def resume_data_fixture():
         yield test_file_path, test_data
 
 
-def test_load_data(temp_resume_data_fixture):
+def test_load_data(unique_resume_data_fixture):
     '''
     Test the load_data util function
     '''
-    test_file_path, test_data = temp_resume_data_fixture
+    test_file_path, test_data = unique_resume_data_fixture
 
     # Test if the load_data function successfully loads the data
     data = load_data(test_file_path)
@@ -225,7 +225,7 @@ def test_load_data(temp_resume_data_fixture):
         os.remove(invalid_json_file)
 
 
-# testcases for ai suggested improved descriptions
+# Test cases for AI-suggested improved descriptions
 @patch('app.get_suggestion')
 def test_get_description_suggestion(mock_get_suggestion):
     '''
