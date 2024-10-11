@@ -1,36 +1,44 @@
 {
-    "user": [
-        {
-            "name": "Jackie Stewart",
-            "phone_number": "+4478322678",
-            "email_address": "jack@resume.com"
-        }
-    ],
-    "experience": [
-        {
-            "title": "Software Developer",
-            "company": "A Cool Company",
-            "start_date": "October 2022",
-            "end_date": "Present",
-            "description": "Writing Python Code",
-            "logo": "example-logo.png"
-        }
-    ],
-    "education": [
-        {
-            "degree": "Computer Science",
-            "institution": "University of Tech",
-            "start_date": "September 2019",
-            "end_date": "July 2022",
-            "grade": "80%",
-            "logo": "example-logo.png"
-        }
-    ],
-    "skill": [
-        {
-            "name": "Python",
-            "experience": "1-2 Years",
-            "logo": "example-logo.png"
-        }
-    ]
+  "user": [
+    {
+      "name": "Jackie Stewart",
+      "phone_number": "+4478322678",
+      "email_address": "jack@resume.com"
+    }
+  ],
+  "experience": [
+    {
+      "title": "Software Developer",
+      "company": "A Cool Company",
+      "start_date": "October 2022",
+      "end_date": "Present",
+      "description": "Writing Python Code",
+      "logo": "example-logo.png"
+    }
+  ],
+  "education": [
+    {
+      "degree": "Computer Science",
+      "institution": "University of Tech",
+      "start_date": "September 2019",
+      "end_date": "July 2022",
+      "grade": "80%",
+      "logo": "example-logo.png"
+    }
+  ],
+  "skill": [
+    {
+      "name": "Python",
+      "experience": "1-2 Years",
+      "logo": "example-logo.png"
+    }
+  ],
+  "project": [
+    {
+      "title": "My Title",
+      "description": "A sample project",
+      "technologies": ["Python", "Flask"],
+      "link": "https://github.com/username/sample-project"
+    }
+  ]
 }

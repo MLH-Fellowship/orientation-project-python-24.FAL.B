@@ -2,7 +2,7 @@
 Flask Application
 """
 from flask import Flask, jsonify, request
-from models import Experience, Education, Skill
+from models import Experience, Education, Skill, Project
 from utils import check_phone_number, correct_spelling, get_suggestion, load_data
 
 app = Flask(__name__)
@@ -69,7 +69,6 @@ def experience():
     if request.method == "GET":
         return jsonify({"experience": list(data["experience"])}), 200
 
-
     if request.method == "POST":
         new_experience = request.json
         new_exp = new_experience["data"][0]
@@ -83,7 +82,7 @@ def experience():
         )
         data["experience"].append(experience_instance)
         return jsonify({"id": len(data["experience"]) - 1}), 201
-      
+            
     if request.method == 'PUT':
         body = request.get_json()
         new_experience_order = []
@@ -97,10 +96,9 @@ def experience():
 
             new_experience_order.append(
                 Experience(title, company, start_date, end_date, description, logo)
-                )
+            )
         data['experience'] = new_experience_order
-        return_data = [item for item in data['experience']]
-        
+        return_data = list(data['experience'])       
         return jsonify(return_data), 200
 
     return jsonify({"error": "Unsupported request method !"}), 405
@@ -141,7 +139,7 @@ def education():
             new_education_order.append(Education(course, school, start_date, end_date, grade, logo))
         data['education'] = new_education_order
 
-        return_data = [item for item in data['education']]
+        return_data = list(data['education'])
         return jsonify(return_data), 200
     return jsonify({}), 405
 
@@ -198,7 +196,7 @@ def project():
         if not project_id.isdigit():
             raise ValueError("Invalid id")
 
-        # check if the id is within the range of the project list
+        # Check if the id is within the range of the project list
         int_id = int(project_id)
         if int_id < 0 or int_id >= len(data['project']):
             raise ValueError("Project not found")
@@ -217,7 +215,7 @@ def project():
                 return jsonify({"error": str(error)}), 400
 
         return jsonify([
-                        {**project.__dict__, "id": str(index)}
+                        {**project, "id": str(index)}
                         for index, project in enumerate(data['project'])
                 ]), 200
 
@@ -254,7 +252,7 @@ def project():
             if hasattr(data['project'][project_id], key):
                 setattr(data['project'][project_id], key, value)
             else:
-                return jsonify({"error": f"invalid field: {key}"}), 400
+                return jsonify({"error": f"Invalid field: {key}"}), 400
 
         return jsonify({**data['project'][project_id].__dict__, "id": str(project_id)}), 200
 
@@ -290,6 +288,7 @@ def project():
         return delete_project(project_id)
 
     return jsonify({"error": "Unsupported request method"}), 405
+
 
 @app.route("/resume/spellcheck", methods=["POST"])
 def spellcheck():
