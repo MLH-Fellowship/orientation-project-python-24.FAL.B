@@ -149,7 +149,7 @@ def education():
     if request.method == 'GET':
         return jsonify(
             {"education": [edu.__dict__ for edu in data["education"]]})
-    
+
     if request.method == "POST":
         new_education = request.json
         new_edu = new_education["data"][0]
@@ -195,8 +195,8 @@ def skill():
         new_skill = request.json
         skill_data = new_skill["data"][0]
         skill_instance = Skill(
-            skill_data["name"], 
-            skill_data["proficiency"], 
+            skill_data["name"],
+            skill_data["proficiency"],
             skill_data["logo"]
         )
         data["skill"].append(skill_instance)
@@ -205,10 +205,10 @@ def skill():
     if request.method == 'PUT':
         body = request.get_json()
         new_skill_order = []
-        for skill in body['data']:
-            name = skill['name']
-            proficiency = skill['proficiency']
-            logo = skill['logo']
+        for _skill in body['data']:
+            name = _skill['name']
+            proficiency = _skill['proficiency']
+            logo = _skill['logo']
             new_skill_order.append(Skill(name, proficiency, logo))
         data['skill'] = new_skill_order
 
