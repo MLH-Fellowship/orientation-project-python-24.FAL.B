@@ -202,9 +202,10 @@ def project():
 
         return int_id
 
-    if request.method == 'GET':
-        project_id = request.args.get('id', None)
-
+    def get_project(project_id):
+        '''
+        Get project by id
+        '''
         if project_id is not None:
             try:
                 project_id = validate_id(project_id)
@@ -217,8 +218,10 @@ def project():
                         for index, project in enumerate(data['project'])
                 ]), 200
 
-    if request.method == 'POST':
-        body = request.get_json()
+    def add_project(body):
+        '''
+        Add project
+        '''
         mandatory_fields = ['title', 'description', 'technologies', 'link']
         missing_fields = [field for field in mandatory_fields if field not in body]
 
@@ -235,14 +238,15 @@ def project():
 
         return jsonify({**new_project.__dict__, "id": str(len(data['project']) - 1)}), 201
 
-    if request.method == 'PUT':
-        project_id = request.args.get('id', None)
+    def edit_project(project_id, body):
+        '''
+        Edit project
+        '''
         try:
             project_id = validate_id(project_id)
         except ValueError as error:
             return jsonify({"error": str(error)}), 400
 
-        body = request.get_json()
         for key, value in body.items():
             if hasattr(data['project'][project_id], key):
                 setattr(data['project'][project_id], key, value)
@@ -251,8 +255,10 @@ def project():
 
         return jsonify({**data['project'][project_id].__dict__, "id": str(project_id)}), 200
 
-    if request.method == 'DELETE':
-        project_id = request.args.get('id', None)
+    def delete_project(project_id):
+        '''
+        Delete project
+        '''
         try:
             project_id = validate_id(project_id)
         except ValueError as error:
@@ -260,6 +266,25 @@ def project():
 
         del data['project'][project_id]
         return jsonify({}), 204
+
+    if request.method == 'GET':
+        project_id = request.args.get('id', None)
+        return get_project(project_id)
+
+    if request.method == 'POST':
+        body = request.get_json()
+        return add_project(body)
+
+    if request.method == 'PUT':
+        project_id = request.args.get('id', None)
+        body = request.get_json()
+
+        return edit_project(project_id, body)
+
+    if request.method == 'DELETE':
+        project_id = request.args.get('id', None)
+
+        return delete_project(project_id)
 
     return jsonify({"error": "Unsupported request method"}), 405
 
