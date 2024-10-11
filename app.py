@@ -4,10 +4,11 @@ Flask Application
 from flask import Flask, jsonify, request
 from models import Experience, Education, Skill
 from utils import check_phone_number, correct_spelling, get_suggestion, load_data
+
 app = Flask(__name__)
 
-
 data = load_data('data/resume.json')
+
 
 @app.route("/test")
 def hello_world():
@@ -16,8 +17,9 @@ def hello_world():
     """
     return jsonify({"message": "Hello, World!"})
 
+
 @app.route("/resume/user", methods=["GET", "POST", "PUT"])
-def user():
+def user_route():
     """
     Handle GET, POST, and PUT requests for user data.
     GET: Retrieve all users
@@ -46,21 +48,18 @@ def user():
         }
         data['user'].append(new_user)
         return jsonify(new_user), 201
-    if request.method == 'PUT':
-        # Find the user by email and update their information
 
-        for i, user in enumerate(data['user']):
-            if user['email_address'] == email:
-                data['user'][i] = {
-                    'name': name,
-                    'phone_number': phone_number,
-                    'email_address': email
-                }
-                return jsonify(data['user'][i]), 200
+    # Handle PUT request
+    for i, current_user in enumerate(data['user']):
+        if current_user['email_address'] == email:
+            data['user'][i] = {
+                'name': name,
+                'phone_number': phone_number,
+                'email_address': email
+            }
+            return jsonify(data['user'][i]), 200
 
-        return jsonify({"error": "User not found !"}), 404
-
-    return jsonify({"error": "Unsupported request method"}), 405
+    return jsonify({"error": "User not found !"}), 404
 
 
 @app.route("/resume/experience", methods=["GET", "POST"])
@@ -70,8 +69,7 @@ def experience():
     """
 
     if request.method == "GET":
-        return jsonify(
-            {"experience": [exp for exp in data["experience"]]})
+        return jsonify({"experience": list(data["experience"])}), 200
 
     if request.method == "POST":
         new_experience = request.json
@@ -84,9 +82,9 @@ def experience():
             new_experience["logo"],
         )
         data["experience"].append(experience_instance)
-        return jsonify({"id": len(data["experience"]) - 1})
+        return jsonify({"id": len(data["experience"]) - 1}), 201
 
-    return jsonify({})
+    return jsonify({}), 405
 
 
 @app.route("/resume/education", methods=["GET", "POST"])
@@ -95,8 +93,7 @@ def education():
     Handles education requests
     """
     if request.method == "GET":
-        return jsonify(
-            {"education": [edu for edu in data["education"]]})
+        return jsonify({"education": list(data["education"])}), 200
 
     if request.method == "POST":
         new_education = request.json
@@ -109,9 +106,9 @@ def education():
             new_education["logo"],
         )
         data["education"].append(education_instance)
-        return jsonify({"id": len(data["education"]) - 1})
+        return jsonify({"id": len(data["education"]) - 1}), 201
 
-    return jsonify({})
+    return jsonify({}), 405
 
 
 @app.route("/resume/skill", methods=["GET", "POST"])
@@ -121,7 +118,7 @@ def skill():
     """
 
     if request.method == "GET":
-        return jsonify({"skills": [skill for skill in data["skill"]]})
+        return jsonify({"skills": list(data["skill"])}), 200
 
     if request.method == "POST":
         new_skill = request.json
@@ -129,9 +126,9 @@ def skill():
             new_skill["name"], new_skill["proficiency"], new_skill["logo"]
         )
         data["skill"].append(skill_instance)
-        return jsonify({"id": len(data["skill"]) - 1})
+        return jsonify({"id": len(data["skill"]) - 1}), 201
 
-    return jsonify({})
+    return jsonify({}), 405
 
 
 @app.route("/resume/spellcheck", methods=["POST"])
@@ -159,4 +156,4 @@ def get_description_suggestion():
     if not description or not description_type:
         return jsonify({"error": "Description and type are required"}), 400
     suggestion = get_suggestion(description, description_type)
-    return jsonify({"suggestion": suggestion})
+    return jsonify({"suggestion": suggestion}), 200

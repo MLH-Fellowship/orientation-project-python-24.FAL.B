@@ -12,7 +12,6 @@ from app import app
 from utils import load_data
 
 
-
 def test_client():
     '''
     Makes a request and checks the message received is the same
@@ -20,6 +19,7 @@ def test_client():
     response = app.test_client().get('/test')
     assert response.status_code == 200
     assert response.json['message'] == "Hello, World!"
+
 
 def test_user():
     '''
@@ -60,6 +60,7 @@ def test_user():
     assert response.json['name'] == 'Ola Doe'
     assert response.json['phone_number'] == '+0987654321'
     assert response.json['email_address'] == 'johndoe@example.com'
+
 
 def test_experience():
     '''
@@ -146,8 +147,9 @@ def test_correct_spelling(text, expected):
     assert response.status_code == 200
     assert response.json['after'] == expected
 
+
 @pytest.fixture
-def setup_teardown():
+def resume_data_fixture():
     '''
     Setup temporary file to test load_data
     '''
@@ -195,11 +197,12 @@ def setup_teardown():
 
         yield test_file_path, test_data
 
-def test_load_data(setup_teardown):
+
+def test_load_data(temp_resume_data_fixture):
     '''
     Test the load_data util function
     '''
-    test_file_path, test_data = setup_teardown
+    test_file_path, test_data = temp_resume_data_fixture
 
     # Test if the load_data function successfully loads the data
     data = load_data(test_file_path)
@@ -220,6 +223,8 @@ def test_load_data(setup_teardown):
 
     if os.path.exists(invalid_json_file):
         os.remove(invalid_json_file)
+
+
 # testcases for ai suggested improved descriptions
 @patch('app.get_suggestion')
 def test_get_description_suggestion(mock_get_suggestion):
