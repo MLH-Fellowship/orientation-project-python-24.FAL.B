@@ -58,7 +58,7 @@ def correct_spelling(text: str):
 def load_data(file_path):
     """ Loads the json file """
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding="utf-8") as file:
             data = json.load(file)
             print(f"Successfully loaded data from {file_path}")
             return data
@@ -67,7 +67,4 @@ def load_data(file_path):
         return None
     except json.JSONDecodeError:
         print(f"Error: The file {file_path} contains invalid JSON.")
-        return None
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
         return None

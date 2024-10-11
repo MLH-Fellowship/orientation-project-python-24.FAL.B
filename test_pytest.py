@@ -3,13 +3,14 @@ Tests in Pytest
 '''
 
 import os
+from unittest.mock import patch
 import json
 import tempfile
 import pytest
 from app import app
 
 from utils import load_data
-from unittest.mock import patch
+
 
 
 def test_client():
@@ -189,7 +190,7 @@ def setup_teardown():
                 }
             ]
         }
-        with open(test_file_path, 'w') as file:
+        with open(test_file_path, 'w', encoding="utf-8") as file:
             json.dump(test_data, file)
 
         yield test_file_path, test_data
@@ -211,7 +212,7 @@ def test_load_data(setup_teardown):
 
     # Test if the load_data function handles invalid JSON
     invalid_json_file = os.path.join(tempfile.gettempdir(), 'invalid_resume.json')
-    with open(invalid_json_file, 'w') as file:
+    with open(invalid_json_file, 'w', encoding="utf-8") as file:
         file.write('{invalid_json}')
 
     data = load_data(invalid_json_file)
