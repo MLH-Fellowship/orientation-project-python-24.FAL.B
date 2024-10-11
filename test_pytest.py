@@ -69,18 +69,43 @@ def test_experience():
     Check that it returns the new experience in that list
     '''
     example_experience = {
-        "title": "Software Developer",
-        "company": "A Cooler Company",
-        "start_date": "October 2022",
-        "end_date": "Present",
-        "description": "Writing JavaScript Code",
-        "logo": "example-logo.png"
+        "data": [
+            {
+                "title": "Software Developer",
+                "company": "A Cooler Company",
+                "start_date": "October 2022",
+                "end_date": "Present",
+                "description": "Writing JavaScript Code",
+                "logo": "example-logo.png"
+            }
+        ]
     }
 
     item_id = app.test_client().post('/resume/experience',
                                      json=example_experience).json['id']
     response = app.test_client().get('/resume/experience')
-    assert response.json["experience"][item_id] == example_experience
+    print(response.json)
+    assert response.json["experience"][item_id] == example_experience['data'][0]
+
+    # test PUT request
+    response = app.test_client().put('/resume/experience', json={"data": [
+            {
+                "title": "Software Developer",
+                "company": "The Coolest Company",
+                "start_date": "October 2024",
+                "end_date": "Present",
+                "description": "Writing Python Code",
+                "logo": "example-logo.png"
+            }
+        ]})
+    assert response.status_code == 200
+    response_data = response.json[0]
+    assert response_data['title'] == 'Software Developer'
+    assert response_data['company'] == 'The Coolest Company'
+    assert response_data['start_date'] == 'October 2024'
+    assert response_data['end_date'] == 'Present'
+    assert response_data['description'] == 'Writing Python Code'
+    assert response_data['logo'] == 'example-logo.png'
 
 
 def test_education():
@@ -89,19 +114,41 @@ def test_education():
     
     Check that it returns the new education in that list
     '''
-    example_education = {
+    example_education = {"data": [{
         "course": "Engineering",
         "school": "NYU",
         "start_date": "October 2022",
         "end_date": "August 2024",
         "grade": "86%",
         "logo": "example-logo.png"
-    }
+    }]}
+
     item_id = app.test_client().post('/resume/education',
                                      json=example_education).json['id']
 
     response = app.test_client().get('/resume/education')
-    assert response.json["education"][item_id] == example_education
+    assert response.json["education"][item_id] == example_education['data'][0]
+
+    response = app.test_client().put('/resume/education', json={
+        "data": [
+            {
+                "course": "Updated Course",
+                "school": "Updated University",
+                "start_date": "September 2020",
+                "end_date": "June 2023",
+                "grade": "90%",
+                "logo": "new-education-logo.png"
+            }
+        ]
+    })
+    assert response.status_code == 200
+    response_data = response.json[0]
+    assert response_data['course'] == 'Updated Course'
+    assert response_data['school'] == 'Updated University'
+    assert response_data['start_date'] == 'September 2020'
+    assert response_data['end_date'] == 'June 2023'
+    assert response_data['grade'] == '90%'
+    assert response_data['logo'] == 'new-education-logo.png'
 
 
 def test_skill():
@@ -110,18 +157,117 @@ def test_skill():
     
     Check that it returns the new skill in that list
     '''
-    example_skill = {
+    example_skill = { "data":[{
         "name": "JavaScript",
         "proficiency": "2-4 years",
         "logo": "example-logo.png"
+    }]
     }
 
     item_id = app.test_client().post('/resume/skill',
                                      json=example_skill).json['id']
 
     response = app.test_client().get('/resume/skill')
-    assert response.json["skills"][item_id] == example_skill
+    assert response.json["skills"][item_id] == example_skill["data"][0]
 
+    response = app.test_client().put('/resume/skill', json={
+        "data": [
+            {
+                "name": "Python",
+                "proficiency": "4-6 years",
+                "logo": "new-logo.png"
+            }
+        ]
+    })
+    assert response.status_code == 200
+    response_data = response.json[0]
+    assert response_data['name'] == 'Python'
+    assert response_data['proficiency'] == '4-6 years'
+    assert response_data['logo'] == 'new-logo.png'
+
+
+
+def test_get_project():
+    '''
+    Test the get_project function
+
+    Check that it returns a list of projects
+    '''
+    response = app.test_client().get('/resume/project')
+    assert response.status_code == 200
+    assert isinstance(response.json, list)
+
+def test_add_project():
+    '''
+    Test the add_project function
+
+    Check that it returns the new project
+    Check that it returns an error when missing fields
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    response = app.test_client().post('/resume/project', json=new_project)
+    assert response.status_code == 201
+    assert response.json == {**new_project, 'id': '1'}
+
+    new_project.pop('title')
+    response = app.test_client().post('/resume/project', json=new_project)
+    assert response.status_code == 400
+    assert response.json == {'error': 'Missing fields: title'}
+
+def test_edit_project():
+    '''
+    Test the edit_project function
+
+    Check that it returns the updated project
+    Check that it returns an error when the project id is invalid
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    new_project_id = app.test_client().post('/resume/project', json=new_project).json['id']
+    new_project['title'] = 'New Project'
+    new_project['description'] = 'A new project'
+    new_project['technologies'] = ['Python', 'Flask', 'Docker']
+
+    response = app.test_client().\
+                    put('/resume/project', json=new_project, query_string={'id': new_project_id})
+
+    assert response.status_code == 200
+    assert response.json == {**new_project, 'id': new_project_id}
+
+    response = app.test_client().\
+                        put('/resume/project', json=new_project, query_string={'id': 'invalid-id'})
+    assert response.status_code == 400
+    assert response.json == {'error': 'Invalid id'}
+
+def test_delete_project():
+    '''
+    Test the delete_project function
+
+    Check that it returns a 204 status code
+    Check that it returns an error when the project id is invalid
+    '''
+    new_project = {
+        'title': 'Sample Project',
+        'description': 'A sample project',
+        'technologies': ['Python', 'Flask'],
+        'link': 'https://github.com/username/sample-project'
+    }
+    new_project_id = app.test_client().post('/resume/project', json=new_project).json['id']
+    response = app.test_client().delete('/resume/project', query_string={'id': new_project_id})
+    assert response.status_code == 204
+
+    response = app.test_client().delete('/resume/project', query_string={'id': 'invalid-id'})
+    assert response.status_code == 400
+    assert response.json == {'error': 'Invalid id'}
 
 @pytest.mark.parametrize('text, expected', [
     ('thiss is an exmple of spell chcking.',
