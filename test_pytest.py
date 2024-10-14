@@ -1,10 +1,15 @@
 '''
 Tests in Pytest
 '''
+
+import os
 from unittest.mock import patch
+import json
+import tempfile
 import pytest
 from app import app
 
+from utils import load_data
 
 
 def test_client():
@@ -14,6 +19,7 @@ def test_client():
     response = app.test_client().get('/test')
     assert response.status_code == 200
     assert response.json['message'] == "Hello, World!"
+
 
 def test_user():
     '''
@@ -54,6 +60,7 @@ def test_user():
     assert response.json['name'] == 'Ola Doe'
     assert response.json['phone_number'] == '+0987654321'
     assert response.json['email_address'] == 'johndoe@example.com'
+
 
 def test_experience():
     '''
@@ -286,7 +293,79 @@ def test_correct_spelling(text, expected):
     assert response.status_code == 200
     assert response.json['after'] == expected
 
-# testcases for ai suggested imrpvoed descriptions
+
+def test_load_data():
+    '''
+    Test the load_data function with various scenarios
+    '''
+    # Setup test data
+    test_data = {
+        "user": [
+            {
+                "name": "Jackie Stewart",
+                "phone_number": "+4478322678",
+                "email_address": "jack@resume.com"
+            }
+        ],
+        "experience": [
+            {
+                "title": "Software Developer",
+                "company": "A Cool Company",
+                "start_date": "October 2022",
+                "end_date": "Present",
+                "description": "Writing Python Code",
+                "logo": "example-logo.png"
+            }
+        ],
+        "education": [
+            {
+                "degree": "Computer Science",
+                "institution": "University of Tech",
+                "start_date": "September 2019",
+                "end_date": "July 2022",
+                "grade": "80%",
+                "logo": "example-logo.png"
+            }
+        ],
+        "skill": [
+            {
+                "name": "Python",
+                "experience": "1-2 Years",
+                "logo": "example-logo.png"
+            }
+        ]
+    }
+    # Create a temporary file with test data
+    with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as temp_file:
+        json.dump(test_data, temp_file)
+        test_file_path = temp_file.name
+
+    try:
+        # Test 1: Check if load_data function successfully loads the data
+        data = load_data(test_file_path)
+        assert data == test_data, "Loaded data does not match test data"
+
+        # Test 2: Check if load_data function handles file not found
+        non_existent_file = os.path.join(tempfile.gettempdir(), 'non_existent_file.json')
+        data = load_data(non_existent_file)
+        assert data is None, "load_data should return None for non-existent file"
+
+        # Test 3: Check if load_data function handles invalid JSON
+        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as invalid_file:
+            invalid_file.write('{invalid_json}')
+            invalid_json_file = invalid_file.name
+
+        data = load_data(invalid_json_file)
+        assert data is None, "load_data should return None for invalid JSON"
+
+    finally:
+        # Cleanup
+        os.unlink(test_file_path)
+        if 'invalid_json_file' in locals():
+            os.unlink(invalid_json_file)
+
+
+# Test cases for AI-suggested improved descriptions
 @patch('app.get_suggestion')
 def test_get_description_suggestion(mock_get_suggestion):
     '''
